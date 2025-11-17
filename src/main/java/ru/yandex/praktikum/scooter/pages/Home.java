@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ru.yandex.praktikum.scooter.constants.HomePage;
 
 import java.time.Duration;
 
@@ -16,6 +15,8 @@ public class Home {
 
     // Локаторы
     private final By cookieButton = By.id("rcc-confirm-button");
+    private final By orderButtonTop = By.xpath("//button[contains(@class, 'Button_Button__ra12g') and not(contains(@class, 'Button_UltraBig__UU3Lp'))]");
+    private final By orderButtonBottom = By.xpath("//button[contains(@class, 'Button_Button__ra12g') and contains(@class, 'Button_UltraBig__UU3Lp')]");
     private final By questionsSection = By.className("Home_FAQ__3uVm4");
 
     public Home(WebDriver driver) {
@@ -23,47 +24,35 @@ public class Home {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public Home waitForLoadHomePage() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(HomePage.ORDER_BUTTON_TOP));
-        return this;
-    }
-
-    public Home acceptCookies() {
+    // методы для работы с формой
+    public void acceptCookies() {
         driver.findElement(cookieButton).click();
-        return this;
     }
 
-    public Home scrollToQuestions() {
-        WebElement element = driver.findElement(questionsSection);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
-        return this;
+    public void scrollToQuestions() {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+                driver.findElement(questionsSection));
     }
 
-    public Home clickQuestion(By questionLocator) {
-        WebElement question = driver.findElement(questionLocator);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", question);
-        question.click();
-        return this;
-    }
+    public String clickQuestionAndGetAnswer(int index) {
+        By question = By.id("accordion__heading-" + index);
+        By answer = By.id("accordion__panel-" + index);
 
-    public Home waitLoadAfterClickQuestion(By answerLocator) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(answerLocator));
-        return this;
+        WebElement questionElement = driver.findElement(question);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", questionElement);
+        questionElement.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(answer));
+        return driver.findElement(answer).getText();
     }
 
     public void clickOrderButtonTop() {
-        WebElement element = driver.findElement(HomePage.ORDER_BUTTON_TOP);
-        element.click();
+        driver.findElement(orderButtonTop).click();
     }
 
     public void clickOrderButtonBottom() {
-        WebElement element = driver.findElement(HomePage.ORDER_BUTTON_BOTTOM);
-
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element);
-
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        WebElement button = driver.findElement(orderButtonBottom);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", button);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
     }
 }

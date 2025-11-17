@@ -11,14 +11,18 @@ public class WebDriverFactory {
         WebDriver driver;
 
         switch (browserType.toLowerCase()) {
-            //case "firefox":
-            //  WebDriverManager.firefoxdriver().setup();
-            // driver = new FirefoxDriver();
-            // break;
+            case "firefox":
+                // ✅ РАСКОММЕНТИРОВАТЬ Firefox
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver();
+                break;
             case "chrome":
             default:
-                WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                // ✅ ЗАКОММЕНТИРОВАТЬ Chrome
+                // WebDriverManager.chromedriver().setup();
+                // driver = new ChromeDriver();
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver();
                 break;
         }
 

@@ -22,7 +22,6 @@ public class OrderTest {
     private WebDriver driver;
     private Home homePage;
     private Order orderPage;
-
     private final String orderButtonType;
     private final int dataSetIndex;
 
@@ -34,68 +33,45 @@ public class OrderTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                {"top", 0},      // Верхняя кнопка с первым набором данных
-                {"top", 1},      // Верхняя кнопка со вторым набором данных
-                {"bottom", 0},   // Нижняя кнопка с первым набором данных
-                {"bottom", 1}    // Нижняя кнопка со вторым набором данных
+                {"top", 0}, {"top", 1}, {"bottom", 0}, {"bottom", 1}
         });
     }
 
     @Before
     public void setUp() {
-        // Запуск в CHROME вместо Firefox
-        //driver = WebDriverFactory.getDriver("firefox");
         driver = WebDriverFactory.getDriver("chrome");
-
-        // Переход на сайт
-        driver.get(HomePage.SITE_URL);
-
-        // Инициализация Page Objects
         homePage = new Home(driver);
         orderPage = new Order(driver);
-
-        // Ожидание загрузки и принятие куки
-        homePage.waitForLoadHomePage().acceptCookies();
+        driver.get(HomePage.getSiteUrl());
+        homePage.acceptCookies();
     }
 
     @Test
     public void testOrderScooter() {
-        // Нажимаем на кнопку заказа в зависимости от параметра
-        if ("top".equals(orderButtonType)) {
-            homePage.clickOrderButtonTop();
-        } else {
-            homePage.clickOrderButtonBottom();
-        }
+        if ("top".equals(orderButtonType)) homePage.clickOrderButtonTop();
+        else homePage.clickOrderButtonBottom();
 
-        // Заполняем первую страницу заказа
         orderPage.fillFirstOrderPage(
-                OrderPage.FIRST_NAMES[dataSetIndex],
-                OrderPage.LAST_NAMES[dataSetIndex],
-                OrderPage.ADDRESSES[dataSetIndex],
-                OrderPage.METRO_STATIONS[dataSetIndex],
-                OrderPage.PHONES[dataSetIndex]
+                OrderPage.getFirstName(dataSetIndex),
+                OrderPage.getLastName(dataSetIndex),
+                OrderPage.getAddress(dataSetIndex),
+                OrderPage.getMetroStation(dataSetIndex),
+                OrderPage.getPhone(dataSetIndex)
         );
 
-        // Заполняем вторую страницу заказа
         orderPage.fillSecondOrderPage(
-                OrderPage.DATES[dataSetIndex],
-                OrderPage.RENTAL_PERIODS[dataSetIndex],
-                OrderPage.COLORS[dataSetIndex],
-                OrderPage.COMMENTS[dataSetIndex]
+                OrderPage.getDate(dataSetIndex),
+                OrderPage.getRentalPeriod(dataSetIndex),
+                OrderPage.getColor(dataSetIndex),
+                OrderPage.getComment(dataSetIndex)
         );
 
-        // Подтверждаем заказ
         orderPage.confirmOrder();
-
-        // Проверяем успешное создание заказа
-        assertTrue("Не отображается сообщение об успешном создании заказа",
-                orderPage.isSuccessMessageDisplayed());
+        assertTrue("Заказ не создан", orderPage.isSuccessMessageDisplayed());
     }
 
     @After
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        if (driver != null) driver.quit();
     }
 }

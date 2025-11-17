@@ -7,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ru.yandex.praktikum.scooter.constants.OrderPage;
 
 import java.time.Duration;
 import java.util.List;
@@ -16,74 +15,74 @@ public class Order {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
+    // Локаторы
+    private final By nameField = By.xpath(".//input[@placeholder='* Имя']");
+    private final By lastNameField = By.xpath(".//input[@placeholder='* Фамилия']");
+    private final By addressField = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
+    private final By metroField = By.xpath(".//input[@placeholder='* Станция метро']");
+    private final By phoneField = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
+    private final By nextButton = By.xpath(".//button[text()='Далее']");
+    private final By dateField = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
+    private final By rentalPeriodField = By.className("Dropdown-placeholder");
+    private final By rentalPeriodOption = By.xpath(".//div[@class='Dropdown-option']");
+    private final By blackColorCheckbox = By.id("black");
+    private final By greyColorCheckbox = By.id("grey");
+    private final By commentField = By.xpath(".//input[@placeholder='Комментарий для курьера']");
+    private final By orderButton = By.xpath("//button[contains(@class, 'Button_Middle__1CSJM') and text()='Заказать']");
+    private final By confirmOrderButton = By.xpath(".//button[text()='Да']");
+    private final By successMessage = By.xpath("//div[contains(@class, 'Order_ModalHeader') and contains(text(), 'Заказ оформлен')]");
+
     public Order(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void fillFirstOrderPage(String firstName, String lastName, String address, String metroStation, String phone) {
-        // Заполняем поля
-        driver.findElement(OrderPage.NAME_FIELD).sendKeys(firstName);
-        driver.findElement(OrderPage.LAST_NAME_FIELD).sendKeys(lastName);
-        driver.findElement(OrderPage.ADDRESS_FIELD).sendKeys(address);
+        driver.findElement(nameField).sendKeys(firstName);
+        driver.findElement(lastNameField).sendKeys(lastName);
+        driver.findElement(addressField).sendKeys(address);
 
-        // Выбираем станцию метро
-        WebElement metroField = driver.findElement(OrderPage.METRO_FIELD);
-        metroField.click();
-        metroField.sendKeys(metroStation);
+        WebElement metro = driver.findElement(metroField);
+        metro.click();
+        metro.sendKeys(metroStation);
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[text()='" + metroStation + "']"))).click();
 
-        driver.findElement(OrderPage.PHONE_FIELD).sendKeys(phone);
-
-        // Нажимаем Далее
-        driver.findElement(OrderPage.NEXT_BUTTON).click();
-
-        // Ждем загрузки второй страницы
-        wait.until(ExpectedConditions.visibilityOfElementLocated(OrderPage.DATE_FIELD));
+        driver.findElement(phoneField).sendKeys(phone);
+        driver.findElement(nextButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(dateField));
     }
 
     public void fillSecondOrderPage(String date, String rentalPeriod, String color, String comment) {
-        // Заполняем дату
-        WebElement dateField = driver.findElement(OrderPage.DATE_FIELD);
-        dateField.sendKeys(date);
-        dateField.sendKeys(Keys.ENTER);
+        WebElement dateElement = driver.findElement(dateField);
+        dateElement.sendKeys(date);
+        dateElement.sendKeys(Keys.ENTER);
 
-        // Выбираем срок аренды
-        driver.findElement(OrderPage.RENTAL_PERIOD_FIELD).click();
-        wait.until(ExpectedConditions.elementToBeClickable(OrderPage.RENTAL_PERIOD_OPTION));
-        driver.findElements(OrderPage.RENTAL_PERIOD_OPTION).stream()
+        driver.findElement(rentalPeriodField).click();
+        wait.until(ExpectedConditions.elementToBeClickable(rentalPeriodOption));
+
+        driver.findElements(rentalPeriodOption).stream()
                 .filter(element -> element.getText().equals(rentalPeriod))
                 .findFirst()
                 .ifPresent(WebElement::click);
 
-        // Выбираем цвет
-        if ("black".equals(color)) {
-            driver.findElement(OrderPage.BLACK_COLOR_CHECKBOX).click();
-        } else if ("grey".equals(color)) {
-            driver.findElement(OrderPage.GREY_COLOR_CHECKBOX).click();
-        }
+        if ("black".equals(color)) driver.findElement(blackColorCheckbox).click();
+        else if ("grey".equals(color)) driver.findElement(greyColorCheckbox).click();
 
-        // Заполняем комментарий
-        driver.findElement(OrderPage.COMMENT_FIELD).sendKeys(comment);
+        driver.findElement(commentField).sendKeys(comment);
 
-        // КЛИК ПО КНОПКЕ "ЗАКАЗАТЬ"
-        driver.findElement(OrderPage.ORDER_BUTTON).click();
-
-        // Ждем появления окна подтверждения
-        wait.until(ExpectedConditions.visibilityOfElementLocated(OrderPage.CONFIRM_ORDER_BUTTON));
+        WebElement orderBtn = wait.until(ExpectedConditions.elementToBeClickable(orderButton));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", orderBtn);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(confirmOrderButton));
     }
 
     public void confirmOrder() {
-        // Нажимаем кнопку "Да" в модальном окне
-        driver.findElement(OrderPage.CONFIRM_ORDER_BUTTON).click();
-
-        // Ждем появления сообщения об успехе
-        wait.until(ExpectedConditions.visibilityOfElementLocated(OrderPage.SUCCESS_MESSAGE));
+        driver.findElement(confirmOrderButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(successMessage));
     }
 
     public boolean isSuccessMessageDisplayed() {
         try {
-            return driver.findElement(OrderPage.SUCCESS_MESSAGE).isDisplayed();
+            return driver.findElement(successMessage).isDisplayed();
         } catch (Exception e) {
             return false;
         }
