@@ -8,15 +8,14 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import ru.yandex.praktikum.config.WebDriverFactory;
 import ru.yandex.praktikum.scooter.constants.HomeConstants;
-import ru.yandex.praktikum.scooter.constants.OrderConstants;
 import ru.yandex.praktikum.scooter.pages.HomePage;
 import ru.yandex.praktikum.scooter.pages.OrderPage;
 import java.util.Arrays;
 import java.util.Collection;
 import static org.junit.Assert.assertTrue;
 
-//Тест для проверки оформления заказа самоката
-//Проверяет полный флоу заказа через разные кнопки и с разными данными
+//тест для проверки оформления заказа самоката
+//проверяет полный флоу заказа через разные кнопки и с разными данными
 
 @RunWith(Parameterized.class)
 public class OrderTest {
@@ -24,7 +23,7 @@ public class OrderTest {
     private HomePage homePage;
     private OrderPage orderPage;
 
-    // Параметры для теста
+    // параметры для теста
     private final String orderButtonType;
     private final int dataSetIndex;
 
@@ -33,7 +32,7 @@ public class OrderTest {
         this.dataSetIndex = dataSetIndex;
     }
 
-    // === ТЕСТОВЫЕ ДАННЫЕ ДЛЯ ЗАКАЗОВ ===
+    // === тестовые данные для заказов ===
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
@@ -59,23 +58,24 @@ public class OrderTest {
             homePage.clickOrderButtonBottom();
         }
 
+        // исправленные вызовы - методы из orderpage
         orderPage.fillFirstOrderPage(
-                OrderConstants.getFirstName(dataSetIndex),
-                OrderConstants.getLastName(dataSetIndex),
-                OrderConstants.getAddress(dataSetIndex),
-                OrderConstants.getMetroStation(dataSetIndex),
-                OrderConstants.getPhone(dataSetIndex)
+                orderPage.getFirstName(dataSetIndex),
+                orderPage.getLastName(dataSetIndex),
+                orderPage.getAddress(dataSetIndex),
+                orderPage.getMetroStation(dataSetIndex),
+                orderPage.getPhone(dataSetIndex)
         );
 
         orderPage.fillSecondOrderPage(
-                OrderConstants.getDate(dataSetIndex),
-                OrderConstants.getRentalPeriod(dataSetIndex),
-                OrderConstants.getColor(dataSetIndex),
-                OrderConstants.getComment(dataSetIndex)
+                orderPage.getDate(dataSetIndex),
+                orderPage.getRentalPeriod(dataSetIndex),
+                orderPage.getColor(dataSetIndex),
+                orderPage.getComment(dataSetIndex)
         );
 
         orderPage.confirmOrder();
-        assertTrue("Не отображается сообщение об успешном создании заказа",
+        assertTrue("не отображается сообщение об успешном создании заказа",
                 orderPage.isSuccessMessageDisplayed());
     }
 

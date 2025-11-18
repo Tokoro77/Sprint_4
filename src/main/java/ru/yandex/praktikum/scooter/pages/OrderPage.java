@@ -7,17 +7,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.yandex.praktikum.scooter.constants.OrderConstants;
 import java.time.Duration;
 import java.util.List;
 
 //Page Object для страницы оформления заказа Яндекс Самокат
 //Содержит локаторы и методы для взаимодействия с формой заказа
-
 public class OrderPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // === ЛОКАТОРЫ ДЛЯ ПЕРВОЙ СТРАНИЦЫ ФОРМЫ ЗАКАЗА ===
+    // === локаторы для первой страницы формы заказа ===
     private final By nameField = By.xpath(".//input[@placeholder='* Имя']");
     private final By lastNameField = By.xpath(".//input[@placeholder='* Фамилия']");
     private final By addressField = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
@@ -25,7 +25,7 @@ public class OrderPage {
     private final By phoneField = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
     private final By nextButton = By.xpath(".//button[text()='Далее']");
 
-    // === ЛОКАТОРЫ ДЛЯ ВТОРОЙ СТРАНИЦЫ ФОРМЫ ЗАКАЗА ===
+    // === локаторы для второй страницы формы заказа ===
     private final By dateField = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
     private final By rentalPeriodField = By.className("Dropdown-placeholder");
     private final By rentalPeriodOption = By.xpath(".//div[@class='Dropdown-option']");
@@ -34,7 +34,7 @@ public class OrderPage {
     private final By commentField = By.xpath(".//input[@placeholder='Комментарий для курьера']");
     private final By orderButton = By.xpath("//button[contains(@class, 'Button_Middle__1CSJM') and text()='Заказать']");
 
-    // === ЛОКАТОРЫ ДЛЯ ПОДТВЕРЖДЕНИЯ ЗАКАЗА ===
+    // === локаторы для подтверждения заказа ===
     private final By confirmOrderButton = By.xpath(".//button[text()='Да']");
     private final By successMessage = By.xpath("//div[contains(@class, 'Order_ModalHeader') and contains(text(), 'Заказ оформлен')]");
 
@@ -43,7 +43,7 @@ public class OrderPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    // === МЕТОДЫ ДЛЯ РАБОТЫ С ПЕРВОЙ СТРАНИЦЕЙ ФОРМЫ ===
+    // === методы для работы с первой страницей формы ===
     public void fillFirstOrderPage(String firstName, String lastName, String address, String metroStation, String phone) {
         driver.findElement(nameField).sendKeys(firstName);
         driver.findElement(lastNameField).sendKeys(lastName);
@@ -59,7 +59,7 @@ public class OrderPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(dateField));
     }
 
-    // === МЕТОДЫ ДЛЯ РАБОТЫ СО ВТОРОЙ СТРАНИЦЕЙ ФОРМЫ ===
+    // === методы для работы со второй страницей формы ===
     public void fillSecondOrderPage(String date, String rentalPeriod, String color, String comment) {
         WebElement dateElement = driver.findElement(dateField);
         dateElement.sendKeys(date);
@@ -86,11 +86,10 @@ public class OrderPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(confirmOrderButton));
     }
 
-    // === МЕТОДЫ ДЛЯ ПОДТВЕРЖДЕНИЯ И ПРОВЕРКИ ЗАКАЗА ===
+    // === методы для подтверждения и проверки заказа ===
     public void confirmOrder() {
         driver.findElement(confirmOrderButton).click();
     }
-
     public boolean isSuccessMessageDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(successMessage));
@@ -99,4 +98,15 @@ public class OrderPage {
             return false;
         }
     }
+
+    // === геттеры тестовых данных ===
+    public String getFirstName(int index) {return OrderConstants.getTestData()[index][0];}
+    public String getLastName(int index) {return OrderConstants.getTestData()[index][1];}
+    public String getAddress(int index) {return OrderConstants.getTestData()[index][2];}
+    public String getMetroStation(int index) {return OrderConstants.getTestData()[index][3];}
+    public String getPhone(int index) {return OrderConstants.getTestData()[index][4];}
+    public String getDate(int index) {return OrderConstants.getTestData()[index][5];}
+    public String getRentalPeriod(int index) {return OrderConstants.getTestData()[index][6];}
+    public String getColor(int index) {return OrderConstants.getTestData()[index][7];}
+    public String getComment(int index) {return OrderConstants.getTestData()[index][8];}
 }
