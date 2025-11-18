@@ -6,18 +6,10 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import java.time.Duration;
 
 public class WebDriverFactory {
-    public static WebDriver getDriver(String browserType) {
-        WebDriver driver;
 
-        switch (browserType.toLowerCase()) {
-            case "chrome":
-            default:
-                // ✅ ВОЗВРАЩАЕМ CHROME
-                WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
-                break;
-        }
-
+    public static WebDriver getDriver() {
+        WebDriverManager.chromedriver().setup();
+        WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         return driver;
