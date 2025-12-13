@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # IntelliJ IDEA
 .idea/
 *.iws
@@ -13,3 +14,20 @@ release.properties
 # Build
 build/
 dist/
+=======
+# IntelliJ IDEA 
+.idea/ 
+*.iws 
+*.iml 
+*.ipr 
+out/ 
+ 
+# Maven 
+target/ 
+pom.xml.tag 
+release.properties 
+ 
+# Build 
+build/ 
+dist/ 
+>>>>>>> main
